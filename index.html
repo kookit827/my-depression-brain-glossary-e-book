@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>抑鬱大腦研究——寫給正在走這段路的你</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --ink:#2a3830;
+  --ink2:#4a5e56;
+  --ink3:#6b7f78;
+  --page:#faf8f3;
+  --page2:#f3f0e8;
+  --line:#ddd8cc;
+  --sage:#7a9e8e;
+  --sage-light:#e8f0ec;
+  --sage-mid:#b8d0c4;
+  --warm:#c4956a;
+  --warm-light:#f5ede3;
+  --card:#ffffff;
+  --radius:16px;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'Noto Sans TC',system-ui,sans-serif;
+  background:var(--page);
+  color:var(--ink);
+  line-height:1.85;
+  font-size:16px;
+  overflow-x:hidden;
+}
+
+/* 左側書脊導航 */
+.spine{
+  position:fixed;
+  left:0;top:0;bottom:0;
+  width:52px;
+  background:var(--sage);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  z-index:100;
+}
+.spine-title{
+  writing-mode:vertical-rl;
+  font-size:11px;
+  color:rgba(255,255,255,.7);
+  letter-spacing:.12em;
+  margin-bottom:16px;
+  font-family:'Noto Serif TC',serif;
+}
+.spine-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:rgba(255,255,255,.35);
+  cursor:pointer;
+  transition:.2s;
+  border:none;
+  flex-shrink:0;
+}
+.spine-dot:hover,.spine-dot.active{
+  background:rgba(255,255,255,.9);
+  transform:scale(1.3);
+}
+
+/* 主內容區 */
+.book{
+  margin-left:52px;
+  min-height:100vh;
+}
+
+/* 封面 */
+.cover{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:5vw 8vw;
+  background:linear-gradient(160deg, #e8f0ec 0%, #faf8f3 55%, #f5ede3 100%);
+  position:relative;
+  overflow:hidden;
+}
+.cover::before{
+  content:'';
+  position:absolute;
+  right:-80px;top:-80px;
+  width:380px;height:380px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(122,158,142,.12) 0%, transparent 70%);
+  pointer-events:none;
+}
+.cover-tag{
+  font-size:12px;
+  letter-spacing:.15em;
+  color:var(--sage);
+  margin-bottom:20px;
+  font-weight:400;
+}
+.cover-title{
+  font-family:'Noto Serif TC',serif;
+  font-size:clamp(32px,5vw,52px);
+  font-weight:300;
+  line-height:1.4;
+  color:var(--ink);
+  margin-bottom:10px;
+}
+.cover-sub{
+  font-size:clamp(14px,2vw,18px);
+  color:var(--ink2);
+  margin-bottom:32px;
+  font-weight:300;
+}
+.cover-quote{
+  max-width:520px;
+  font-size:15px;
+  line-height:2;
+  color:var(--ink2);
+  border-left:2px solid var(--sage-mid);
+  padding-left:20px;
+  margin-bottom:40px;
+  font-family:'Noto Serif TC',serif;
+  font-weight:300;
+}
+.cover-start{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:var(--sage);
+  color:#fff;
+  border:none;
+  border-radius:999px;
+  padding:12px 24px;
+  font-size:14px;
+  font-family:'Noto Sans TC',sans-serif;
+  cursor:pointer;
+  transition:.2s;
+  text-decoration:none;
+}
+.cover-start:hover{
+  background:#5e8777;
+  transform:translateY(-1px);
+}
+.cover-toc{
+  margin-top:40px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.toc-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:13px;
+  color:var(--ink3);
+  cursor:pointer;
+  transition:.15s;
+  text-decoration:none;
+}
+.toc-row:hover{color:var(--sage)}
+.toc-num{
+  width:22px;height:22px;
+  border-radius:50%;
+  background:var(--sage-light);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;
+  color:var(--sage);
+  flex-shrink:0;
+}
+
+/* 章節通用 */
+.chapter{
+  max-width:720px;
+  margin:0 auto;
+  padding:80px 5vw 60px;
+}
+.chapter-header{
+  margin-bottom:48px;
+}
+.chapter-num{
+  font-size:11px;
+  letter-spacing:.15em;
+  color:var(--sage);
+  display:block;
+  margin-bottom:10px;
+}
+.chapter-title{
+  font-family:'Noto Serif TC',serif;
+  font-size:clamp(22px,3.5vw,34px);
+  font-weight:300;
+  line-height:1.45;
+  color:var(--ink);
+  margin-bottom:12px;
+}
+.chapter-intro{
+  font-size:15px;
+  color:var(--ink2);
+  line-height:2;
+  border-bottom:1px solid var(--line);
+  padding-bottom:32px;
+  font-weight:300;
+}
+.divider{
+  border:none;
+  border-top:1px solid var(--line);
+  margin:40px 0;
+}
+
+/* 段落與標題 */
+.sec-title{
+  font-family:'Noto Serif TC',serif;
+  font-size:18px;
+  font-weight:400;
+  color:var(--ink);
+  margin:36px 0 14px;
+}
+p{
+  font-size:15px;
+  line-height:2;
+  color:var(--ink2);
+  margin-bottom:16px;
+}
+p:last-child{margin-bottom:0}
+
+/* 引言框 */
+.quote-block{
+  border-left:3px solid var(--sage-mid);
+  padding:16px 20px;
+  background:var(--sage-light);
+  border-radius:0 12px 12px 0;
+  margin:24px 0;
+  font-family:'Noto Serif TC',serif;
+  font-size:14px;
+  line-height:2;
+  color:var(--ink2);
+  font-weight:300;
+}
+
+/* 暖色引言 */
+.quote-warm{
+  border-left:3px solid #d4a97a;
+  background:var(--warm-light);
+  border-radius:0 12px 12px 0;
+  padding:16px 20px;
+  margin:24px 0;
+  font-family:'Noto Serif TC',serif;
+  font-size:14px;
+  line-height:2;
+  color:#6b4a2a;
+  font-weight:300;
+}
+
+/* 知識卡片 */
+.cards-row{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  margin:24px 0;
+}
+.kcard{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:18px 20px;
+  position:relative;
+  overflow:hidden;
+}
+.kcard::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:4px;
+  border-radius:4px 0 0 4px;
+}
+.kcard.sage::before{background:var(--sage)}
+.kcard.warm::before{background:var(--warm)}
+.kcard.blue::before{background:#7aabcc}
+.kcard-icon{font-size:20px;margin-bottom:8px;display:block}
+.kcard-title{
+  font-size:14px;
+  font-weight:500;
+  color:var(--ink);
+  margin-bottom:6px;
+}
+.kcard-body{
+  font-size:14px;
+  line-height:1.9;
+  color:var(--ink2);
+  margin:0;
+}
+
+/* 對比卡——誤解表 */
+.compare-table{
+  width:100%;
+  border-collapse:collapse;
+  margin:24px 0;
+  font-size:14px;
+}
+.compare-table th{
+  background:var(--sage-light);
+  color:var(--ink2);
+  padding:10px 14px;
+  font-weight:500;
+  text-align:left;
+  font-size:13px;
+}
+.compare-table td{
+  padding:10px 14px;
+  border-bottom:1px solid var(--line);
+  color:var(--ink2);
+  line-height:1.8;
+  vertical-align:top;
+}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table .avoid{color:#a05030}
+.compare-table .better{color:#3a6e58}
+
+/* 步驟清單 */
+.steps{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin:24px 0;
+}
+.step{
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+}
+.step-num{
+  width:28px;height:28px;
+  border-radius:50%;
+  background:var(--sage-light);
+  color:var(--sage);
+  font-size:12px;
+  font-weight:500;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  margin-top:2px;
+}
+.step-text{
+  font-size:14px;
+  line-height:1.9;
+  color:var(--ink2);
+}
+.step-text strong{
+  color:var(--ink);
+  font-weight:500;
+}
+
+/* 小結框 */
+.chapter-end{
+  background:linear-gradient(135deg, var(--sage-light), var(--warm-light));
+  border-radius:var(--radius);
+  padding:24px 26px;
+  margin-top:40px;
+}
+.chapter-end p{
+  font-size:14px;
+  line-height:2;
+  color:var(--ink2);
+  margin-bottom:10px;
+}
+.chapter-end p:last-child{margin:0}
+
+/* 頁面分隔 */
+.page-sep{
+  background:var(--page2);
+  height:1px;
+  margin:0;
+}
+
+/* 結語 */
+.epilogue{
+  background:linear-gradient(160deg, #e8f0ec 0%, #faf8f3 60%);
+  padding:80px 5vw;
+}
+.epilogue-inner{
+  max-width:600px;
+  margin:0 auto;
+  text-align:center;
+}
+.epilogue-title{
+  font-family:'Noto Serif TC',serif;
+  font-size:28px;
+  font-weight:300;
+  color:var(--ink);
+  margin-bottom:24px;
+  line-height:1.5;
+}
+.epilogue p{
+  font-size:15px;
+  line-height:2.1;
+  color:var(--ink2);
+  margin-bottom:16px;
+}
+.epilogue-final{
+  font-family:'Noto Serif TC',serif;
+  font-size:16px;
+  color:var(--sage);
+  margin-top:32px;
+  font-weight:300;
+  font-style:italic;
+}
+.date{
+  font-size:12px;
+  color:var(--ink3);
+  margin-top:32px;
+}
+
+/* 滾動進度 */
+.progress-bar{
+  position:fixed;
+  top:0;left:52px;right:0;
+  height:2px;
+  background:var(--line);
+  z-index:200;
+}
+.progress-fill{
+  height:100%;
+  background:var(--sage);
+  width:0%;
+  transition:width .1s;
+}
+
+/* 章節間隔背景 */
+.ch-bg-alt{background:var(--page2)}
+
+/* 章節過渡句 */
+.ch-transition{
+  text-align:center;
+  padding:32px 0 8px;
+  font-family:'Noto Serif TC',serif;
+  font-size:14px;
+  color:var(--ink3);
+  font-weight:300;
+  font-style:italic;
+}
+.ch-transition a{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:12px;
+  font-size:13px;
+  color:var(--sage);
+  text-decoration:none;
+  font-style:normal;
+  font-family:'Noto Sans TC',sans-serif;
+  transition:.15s;
+}
+.ch-transition a:hover{color:#5e8777}
+
+/* 反思框 */
+.reflect-wrap{
+  margin-top:36px;
+  border-top:1px solid var(--line);
+  padding-top:24px;
+}
+.reflect-toggle{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:none;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:10px 18px;
+  font-size:13px;
+  color:var(--ink3);
+  cursor:pointer;
+  font-family:'Noto Sans TC',sans-serif;
+  transition:.2s;
+}
+.reflect-toggle:hover{
+  border-color:var(--sage-mid);
+  color:var(--sage);
+  background:var(--sage-light);
+}
+.reflect-body{
+  display:none;
+  margin-top:14px;
+}
+.reflect-body.open{display:block}
+.reflect-body textarea{
+  width:100%;
+  min-height:90px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px 14px;
+  font-size:14px;
+  font-family:'Noto Sans TC',sans-serif;
+  line-height:1.85;
+  color:var(--ink2);
+  background:#fff;
+  resize:vertical;
+  outline:none;
+  transition:.2s;
+}
+.reflect-body textarea:focus{border-color:var(--sage-mid)}
+.reflect-hint{
+  font-size:12px;
+  color:var(--ink3);
+  margin-top:8px;
+}
+
+/* 本地資源卡 */
+.resource-section{
+  background:var(--sage-light);
+  border:1px solid var(--sage-mid);
+  border-radius:var(--radius);
+  padding:22px 24px;
+  margin-top:28px;
+}
+.resource-title{
+  font-size:13px;
+  font-weight:500;
+  color:var(--sage);
+  letter-spacing:.08em;
+  margin-bottom:14px;
+}
+.resource-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.resource-item{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.resource-name{
+  font-size:14px;
+  font-weight:500;
+  color:var(--ink);
+}
+.resource-detail{
+  font-size:13px;
+  color:var(--ink3);
+  line-height:1.7;
+}
+.resource-tel{
+  font-size:14px;
+  color:var(--sage);
+  font-weight:500;
+  margin-top:2px;
+}
+
+/* 第一步指引 */
+.firststep{
+  background:var(--warm-light);
+  border:1px solid #dfc4a8;
+  border-radius:var(--radius);
+  padding:22px 24px;
+  margin-top:20px;
+}
+.firststep-title{
+  font-size:13px;
+  font-weight:500;
+  color:var(--warm);
+  letter-spacing:.08em;
+  margin-bottom:14px;
+}
+.firststep-steps{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.firststep-row{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+}
+.firststep-num{
+  width:24px;height:24px;
+  border-radius:50%;
+  background:var(--warm);
+  color:#fff;
+  font-size:11px;
+  font-weight:500;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  margin-top:1px;
+}
+.firststep-text{
+  font-size:14px;
+  line-height:1.85;
+  color:var(--ink2);
+}
+
+@media(max-width:640px){
+  .spine{width:36px}
+  .spine-title{font-size:9px}
+  .book{margin-left:36px}
+  .progress-bar{left:36px}
+  .chapter{padding:48px 4vw 40px}
+  .cover{padding:8vw 5vw}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+
+<!-- 書脊 -->
+<nav class="spine" aria-label="章節導航">
+  <span class="spine-title">抑鬱大腦研究</span>
+  <button class="spine-dot active" data-sec="cover" title="封面" aria-label="封面"></button>
+  <button class="spine-dot" data-sec="ch1" title="第一章" aria-label="第一章"></button>
+  <button class="spine-dot" data-sec="ch2" title="第二章" aria-label="第二章"></button>
+  <button class="spine-dot" data-sec="ch3" title="第三章" aria-label="第三章"></button>
+  <button class="spine-dot" data-sec="ch4" title="第四章" aria-label="第四章"></button>
+  <button class="spine-dot" data-sec="ch5" title="第五章" aria-label="第五章"></button>
+  <button class="spine-dot" data-sec="epilogue" title="結語" aria-label="結語"></button>
+</nav>
+
+<main class="book">
+
+<!-- 封面 -->
+<section class="cover" id="cover">
+  <div>
+    <span class="cover-tag">個人研究計畫 · 2026</span>
+    <h1 class="cover-title">抑鬱大腦研究</h1>
+    <p class="cover-sub">寫給正在走這段路的你</p>
+    <blockquote class="cover-quote">
+      這不是一本教科書。<br>
+      它更像一個朋友坐在你旁邊，輕輕地說：<br>
+      「你知道嗎，你腦袋裡發生的事情，是有原因的。<br>
+      而且這些原因，大部分是可以慢慢改變的。」
+    </blockquote>
+    <a href="#ch1" class="cover-start">開始閱讀 →</a>
+    <div class="cover-toc">
+      <a class="toc-row" href="#ch1"><span class="toc-num">一</span>認識抑鬱——從被理解開始</a>
+      <a class="toc-row" href="#ch2"><span class="toc-num">二</span>抑鬱的大腦科學</a>
+      <a class="toc-row" href="#ch3"><span class="toc-num">三</span>抑鬱為什麼會發生</a>
+      <a class="toc-row" href="#ch4"><span class="toc-num">四</span>如何溫柔地與抑鬱共處</a>
+      <a class="toc-row" href="#ch5"><span class="toc-num">五</span>往前看的希望</a>
+    </div>
+  </div>
+</section>
+
+<div class="page-sep"></div>
+
+<!-- 第一章 -->
+<section id="ch1">
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-num">第一章</span>
+    <h2 class="chapter-title">認識抑鬱——<br>從被理解開始</h2>
+    <p class="chapter-intro">你有沒有這樣的時刻——明明昨晚睡了很久，早上醒來卻還是疲倦。喜歡的事情放在眼前，卻提不起任何興趣。周圍的人都在笑，你卻像隔著一層玻璃，在遠遠地看著。</p>
+  </div>
+
+  <p>這種感覺，有時候會被身邊的人說成「想太多」、「矯情」，或者「振作一點就好了」。</p>
+  <p>但我想先說：<strong style="color:var(--ink);font-weight:500">這不是你的錯，也不是你不夠努力。</strong></p>
+  <p>這可能是你的大腦，在用它的方式，告訴你它需要幫助。抑鬱不是懶惰，也不是軟弱。它是一種真實存在的狀態，有它的成因，也有它的出路。</p>
+
+  <div class="quote-block">好消息是，大腦是可以改變的——它有能力修復，有能力重建。恢復，是真實可能的事。</div>
+
+  <hr class="divider">
+  <h3 class="sec-title">什麼是抑鬱症？</h3>
+
+  <p>抑鬱症不是「心情不好」那麼簡單。它是一種持續的、會真實干擾你日常生活的狀態。醫生通常會看以下症狀，而且需要持續兩週以上：</p>
+
+  <div class="steps">
+    <div class="step"><div class="step-num">·</div><div class="step-text"><strong>一直覺得低落</strong>，或者奇怪的空洞感</div></div>
+    <div class="step"><div class="step-num">·</div><div class="step-text"><strong>對原本喜歡的事失去興趣</strong>——那種「提不起勁」的感覺</div></div>
+    <div class="step"><div class="step-num">·</div><div class="step-text">睡眠問題——<strong>睡太多或睡不著</strong></div></div>
+    <div class="step"><div class="step-num">·</div><div class="step-text">很容易疲憊，<strong>像電池一直是空的</strong></div></div>
+    <div class="step"><div class="step-num">·</div><div class="step-text">難以集中注意力，<strong>記憶變差</strong></div></div>
+    <div class="step"><div class="step-num">·</div><div class="step-text">覺得自己沒有價值，或者<strong>莫名的罪惡感</strong></div></div>
+  </div>
+
+  <hr class="divider">
+  <h3 class="sec-title">有些話，聽起來出發點是好的，但其實很傷人</h3>
+
+  <table class="compare-table">
+    <thead><tr><th>常常聽到的話</th><th>真實的情況</th></tr></thead>
+    <tbody>
+      <tr><td class="avoid">「睡一覺就沒事了」</td><td>抑鬱有真實的生理基礎，不會自己消失</td></tr>
+      <tr><td class="avoid">「開心一點，轉移注意力」</td><td>這句話讓正在受苦的人覺得不被理解</td></tr>
+      <tr><td class="avoid">「只有大事才會讓人抑鬱」</td><td>觸發原因很多樣，有時甚至找不到明確原因</td></tr>
+      <tr><td class="avoid">「是意志力薄弱」</td><td>抑鬱跟大腦的神經化學有關，不是個性問題</td></tr>
+    </tbody>
+  </table>
+
+  <hr class="divider">
+  <h3 class="sec-title">抑鬱症和普通悲傷，有什麼不同？</h3>
+
+  <div class="cards-row">
+    <div class="kcard sage">
+      <span class="kcard-icon">🌧</span>
+      <div class="kcard-title">普通悲傷</div>
+      <p class="kcard-body">通常有明確的觸發事件。情緒會隨時間慢慢緩和。即使在難過中，偶爾還是能感受到一點快樂。痛苦主要是關於那件事，不是全面否定自己。</p>
+    </div>
+    <div class="kcard warm">
+      <span class="kcard-icon">🌫</span>
+      <div class="kcard-title">抑鬱症</div>
+      <p class="kcard-body">情緒低落持續兩週以上，不一定有明確原因。就算環境變好了，感覺也不會跟著好轉。<strong style="color:var(--ink);font-weight:500">幾乎完全感受不到快樂</strong>——這是最關鍵的分別。</p>
+    </div>
+  </div>
+
+  <div class="quote-warm">
+    普通悲傷是「我很痛，但我知道這會過去」；<br>
+    抑鬱症往往是「我感覺不到任何東西，也不相信它會好」。
+  </div>
+
+  <p>我們不需要急著替自己貼標籤。重要的是，當你感受到自己需要幫助的時候，願意輕輕地伸出手。</p>
+
+  <div class="chapter-end">
+    <p>抑鬱，不是你的失敗，也不是你的選擇。</p>
+    <p>科學告訴我們：大腦是會改變的。那些因為抑鬱而改變的神經迴路，可以透過治療、支持和時間，一點一點地重新找到平衡。</p>
+    <p>恢復不是奇蹟，它是大腦本來就擁有的能力。你不孤單，而且你值得被好好照顧。</p>
+  </div>
+
+  <div class="reflect-wrap">
+    <button class="reflect-toggle" onclick="toggleReflect(this)">💭 讀完這章，想寫點什麼嗎？</button>
+    <div class="reflect-body">
+      <textarea placeholder="這裡只屬於你。一句話也好，什麼都不寫也好。"></textarea>
+      <p class="reflect-hint">文字不會被儲存或傳送，只是給你一個停下來的空間。</p>
+    </div>
+  </div>
+
+  <div class="ch-transition">
+    讀完了第一章，休息一下也可以。
+    <a href="#ch2">繼續走進大腦的世界 →</a>
+  </div>
+</div>
+</section>
+
+<div class="page-sep"></div>
+
+<!-- 第二章 -->
+<section id="ch2" class="ch-bg-alt">
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-num">第二章</span>
+    <h2 class="chapter-title">抑鬱的大腦科學</h2>
+    <p class="chapter-intro">這一章，我們要輕輕地走進大腦的內部。不是要讓你覺得「大腦壞掉了」，而是想讓你明白：抑鬱的背後，有真實的生理原因。而這些原因，大多是可以改變的。</p>
+  </div>
+
+  <h3 class="sec-title">你腦袋裡的小信差</h3>
+  <p>你的大腦裡，有一群小信差在跑來跑去，負責把「我還好」、「我很累」、「我想動」這些訊息，從一個神經細胞傳到下一個。</p>
+  <p>抑鬱的時候，這群信差出了問題——不是他們消失了，而是<strong style="color:var(--ink);font-weight:500">跑得不順了</strong>。</p>
+
+  <div class="cards-row">
+    <div class="kcard sage">
+      <span class="kcard-icon">🌊</span>
+      <div class="kcard-title">血清素（Serotonin）——低聲說「一切還好」的信差</div>
+      <p class="kcard-body">它少了，你就會一直覺得有什麼不對勁，但又說不清楚是什麼。睡眠、情緒穩定、對生活的基本感覺——都跟它有關。很多抗抑鬱藥（SSRI類）的作用，就是幫助大腦留住更多它。</p>
+    </div>
+    <div class="kcard warm">
+      <span class="kcard-icon">⚡</span>
+      <div class="kcard-title">多巴胺（Dopamine）——說「去做吧，會很好玩」的信差</div>
+      <p class="kcard-body">它安靜了，所以就算你最喜歡的東西放在眼前，也提不起任何感覺。不是你變了，是它沒聲音了。它跟動力、開始行動、感受到快樂都有關係。</p>
+    </div>
+    <div class="kcard blue">
+      <span class="kcard-icon">🔋</span>
+      <div class="kcard-title">去甲腎上腺素——幫你打起精神的信差</div>
+      <p class="kcard-body">它弱了，你就算睡了很久，還是覺得累，還是難以集中，還是對什麼都提不起勁。不是懶，是真的沒有燃料。</p>
+    </div>
+  </div>
+
+  <div class="quote-block">這三個信差不是各自獨立的，他們互相影響。抑鬱不是「缺少了某一個」那麼簡單——而是整個傳遞系統的節奏亂了。好消息是：透過藥物、運動、睡眠和心理治療，這個節奏是可以慢慢被找回來的。</div>
+
+  <hr class="divider">
+  <h3 class="sec-title">三個跟情緒很有關係的大腦部位</h3>
+  <p>抑鬱不只是感覺上的事——它真的會在大腦裡留下痕跡。但這些痕跡<strong style="color:var(--ink);font-weight:500">不是永久的</strong>，先記住這一點。</p>
+
+  <div class="cards-row">
+    <div class="kcard sage">
+      <span class="kcard-icon">🧭</span>
+      <div class="kcard-title">前額葉（Prefrontal Cortex）——你腦袋裡負責踩剎車的人</div>
+      <p class="kcard-body">它幫你做決定、想清楚事情、把情緒拉回來。抑鬱的時候它累壞了——所以你才會覺得連「今天吃什麼」都決定不了。那不是你變蠢了，是它在罷工。</p>
+    </div>
+    <div class="kcard warm">
+      <span class="kcard-icon">🚨</span>
+      <div class="kcard-title">杏仁核（Amygdala）——那隻隨時準備大叫的小狗</div>
+      <p class="kcard-body">它的工作是保護你，感應危險。但抑鬱的時候它變得超級敏感——別人一個眼神、一句沒有惡意的話，它就開始狂叫「危險！危險！」不是你太脆弱，是它病了。</p>
+    </div>
+    <div class="kcard blue">
+      <span class="kcard-icon">🌿</span>
+      <div class="kcard-title">海馬迴（Hippocampus）——幫你記住「我撐過來過」的地方</div>
+      <p class="kcard-body">它存著你的記憶，也存著「上次這樣，我沒事的」這種感覺。長期壓力會讓它變小、變弱——所以抑鬱的時候，你特別容易只記得壞的事，忘記自己其實很有力量。</p>
+    </div>
+  </div>
+
+  <div class="quote-block">聽起來很令人擔心——但研究同時告訴我們：適當的治療和生活調整，可以讓海馬迴的神經再生，讓前額葉重新活躍起來。大腦有自我修復的能力，我們只需要給它機會。</div>
+
+  <hr class="divider">
+  <h3 class="sec-title">神經可塑性——大腦不是石頭，是軟泥土</h3>
+  <p>「神經可塑性」（Neuroplasticity）是近幾十年最重要的腦科學發現之一。它告訴我們一件很重要的事：</p>
+  <div class="quote-warm">大腦不是固定不變的。它更像一塊軟泥土——會根據你的經歷、行為和環境，不斷地長出新的神經連結，甚至長出新的神經細胞。</div>
+  <p>這對抑鬱的恢復來說，是一個非常真實的希望。</p>
+
+  <table class="compare-table">
+    <thead><tr><th>小事</th><th>對大腦的影響</th></tr></thead>
+    <tbody>
+      <tr><td>每天走路，哪怕只是 20 分鐘</td><td class="better">幫助海馬迴長出新細胞，讓血清素和多巴胺多一點</td></tr>
+      <tr><td>睡覺——讓大腦真正休息</td><td class="better">清除白天積累的廢物，修復神經連結</td></tr>
+      <tr><td>深呼吸、正念</td><td class="better">讓那隻一直狂叫的小狗（杏仁核）慢慢安靜下來</td></tr>
+      <tr><td>心理治療</td><td class="better">直接改變負面思維的迴路，建立新的神經連結</td></tr>
+      <tr><td>跟人說說話、感覺被理解</td><td class="better">讓多巴胺和催產素動起來，壓力荷爾蒙下降</td></tr>
+    </tbody>
+  </table>
+
+  <div class="chapter-end">
+    <p>抑鬱在大腦裡留下的痕跡是真實的——但這些痕跡不是永久的判決。</p>
+    <p>化學物質可以重新平衡，神經迴路可以重新塑造，大腦的可塑性，是我們最堅實的希望所在。</p>
+  </div>
+
+  <div class="reflect-wrap">
+    <button class="reflect-toggle" onclick="toggleReflect(this)">💭 讀完這章，想寫點什麼嗎？</button>
+    <div class="reflect-body">
+      <textarea placeholder="這一章有沒有哪個比喻，讓你有一點點「對，就是這樣」的感覺？"></textarea>
+      <p class="reflect-hint">文字不會被儲存或傳送，只是給你一個停下來的空間。</p>
+    </div>
+  </div>
+
+  <div class="ch-transition">
+    知道了「是什麼」，下一步是「為什麼」。
+    <a href="#ch3">繼續了解抑鬱的成因 →</a>
+  </div>
+</div>
+</section>
+
+<div class="page-sep"></div>
+
+<!-- 第三章 -->
+<section id="ch3">
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-num">第三章</span>
+    <h2 class="chapter-title">抑鬱為什麼會發生</h2>
+    <p class="chapter-intro">讀到這裡，你可能開始問：「那我為什麼會抑鬱？是我的問題嗎？」先輕輕地說一句——抑鬱的發生，從來不是單一原因造成的，也從來不是任何人「應得的」。</p>
+  </div>
+
+  <p>它更像是很多條樹根同時在地底生長，最終才讓地面出現了裂縫。了解這些成因，不是為了找人「負責」，而是為了更清楚地看見：哪些地方可以鬆動，哪些地方需要支持。</p>
+
+  <hr class="divider">
+  <h3 class="sec-title">遺傳與生理——傾向，而非命運</h3>
+  <p>如果家人曾經有抑鬱症，你確實比較容易有抑鬱的風險。這是真實的，科學有根據。但「遺傳」不等於「命運」。</p>
+  <div class="quote-block">更貼切的理解是：遺傳給了某些人一個對壓力更敏感的神經系統——就像有些人天生皮膚比較敏感，不代表他們一定會過敏，但在特定條件下，確實更需要多一點照顧。</div>
+  <p>基因和環境永遠是互動的。了解自己的傾向，反而是最好的自我照顧起點。</p>
+
+  <hr class="divider">
+  <h3 class="sec-title">生命經歷——不是你的錯</h3>
+  <p>童年是大腦發育最關鍵的時期。在那段時間裡經歷過的困難——被忽略、不安全、沒有人好好照顧你——會在神經系統留下深刻的印記，讓你在長大後對壓力更敏感一些。</p>
+  <p>這不是說你「一定會」抑鬱，而是說你的「情緒緩衝墊」可能薄了一點。好消息是：成年後的支持、治療和安全的關係，都有能力幫助大腦重新學習如何感到安全。</p>
+  <div class="quote-warm">無論你的抑鬱是因為什麼觸發的，那個痛都是真實的，都值得被認真對待。你不需要「有足夠的理由」才能感到難受。</div>
+
+  <hr class="divider">
+  <h3 class="sec-title">生活方式——我們最能直接影響的部分</h3>
+
+  <div class="cards-row">
+    <div class="kcard sage">
+      <div class="kcard-title">睡眠</div>
+      <p class="kcard-body">睡眠不足和抑鬱，是互相影響的關係——抑鬱讓你睡不好，睡不好讓抑鬱更重。睡眠是大腦清理廢物、修復神經的重要時間。能睡的時候，盡量讓自己睡。</p>
+    </div>
+    <div class="kcard warm">
+      <div class="kcard-title">飲食</div>
+      <p class="kcard-body">腸道和大腦之間，有一條真實的溝通管道（叫「腸腦軸」）。你大概不知道，人體約 90% 的血清素，其實是在腸道製造的。吃得好一點，不只是身體的事，也是大腦的事。</p>
+    </div>
+    <div class="kcard blue">
+      <div class="kcard-title">運動</div>
+      <p class="kcard-body">就算只是每天走路 20–30 分鐘，也能幫助海馬迴長出新細胞、讓壓力荷爾蒙下降。不需要跑步，不需要健身房，走路就已經在幫你的大腦了。</p>
+    </div>
+    <div class="kcard sage">
+      <div class="kcard-title">連結</div>
+      <p class="kcard-body">孤立對抑鬱的大腦非常不友善。你不需要解釋自己的狀態——只是說一句「我今天有點難過」，對身體來說，已經是一個真實的連結了。</p>
+    </div>
+  </div>
+
+  <div class="chapter-end">
+    <p>抑鬱的成因是複雜的，沒有任何人需要為自己的抑鬱「負責」。</p>
+    <p>了解原因，不是為了自我責備，而是為了更清楚地看見：通往恢復的路，有很多條，而你可以選擇從最容易踏出的那一步開始。</p>
+  </div>
+
+  <div class="reflect-wrap">
+    <button class="reflect-toggle" onclick="toggleReflect(this)">💭 讀完這章，想寫點什麼嗎？</button>
+    <div class="reflect-body">
+      <textarea placeholder="這一章有沒有哪個地方，讓你想到自己的經歷？"></textarea>
+      <p class="reflect-hint">文字不會被儲存或傳送，只是給你一個停下來的空間。</p>
+    </div>
+  </div>
+
+  <div class="ch-transition">
+    了解了成因，我們來看看怎麼溫柔地和它共處。
+    <a href="#ch4">繼續第四章 →</a>
+  </div>
+</div>
+</section>
+
+<div class="page-sep"></div>
+
+<!-- 第四章 -->
+<section id="ch4" class="ch-bg-alt">
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-num">第四章</span>
+    <h2 class="chapter-title">如何溫柔地<br>與抑鬱共處</h2>
+    <p class="chapter-intro">面對抑鬱，我們常常被教導要「對抗它」、「打敗它」、「走出來」。但這種語言，有時反而讓人覺得——如果還沒好，是不是自己努力不夠？這一章，我們換一種說法：與抑鬱共處。</p>
+  </div>
+
+  <p>這不是放棄，而是選擇一種更溫柔的方式陪伴自己。在尋求改變的同時，也允許自己現在的樣子存在；在努力的同時，也給自己留下喘息的空間。</p>
+
+  <hr class="divider">
+  <h3 class="sec-title">什麼時候需要尋求專業幫助</h3>
+  <p>很多人會猶豫：「我真的需要去看醫生嗎？是不是太誇張了？」</p>
+  <div class="quote-warm">請放下這個猶豫。尋求幫助，是一種勇氣，不是脆弱。你不需要等到「很嚴重」才去。越早獲得支持，恢復的路往往越順。</div>
+
+  <p>如果你有以下這些感覺，請認真考慮尋求專業支持：</p>
+  <div class="steps">
+    <div class="step"><div class="step-num">·</div><div class="step-text">情緒低落持續兩週以上，沒有明顯好轉</div></div>
+    <div class="step"><div class="step-num">·</div><div class="step-text">對幾乎所有事情都失去興趣</div></div>
+    <div class="step"><div class="step-num">·</div><div class="step-text">睡眠、食慾或日常作息受到明顯影響</div></div>
+    <div class="step"><div class="step-num">·</div><div class="step-text">感到強烈的無價值感或過度的罪惡感</div></div>
+    <div class="step"><div class="step-num">·</div><div class="step-text">難以完成日常工作或照顧自己</div></div>
+    <div class="step"><div class="step-num">·</div><div class="step-text"><strong style="color:var(--ink);font-weight:500">出現反覆的死亡念頭、自傷衝動或自殺想法——請立即聯繫信任的人或危機熱線</strong></div></div>
+  </div>
+
+  <hr class="divider">
+  <h3 class="sec-title">日常生活中的自我照顧小步驟</h3>
+  <p>自我照顧不是「讓自己更快好起來的任務清單」，而是每一天對自己說：「我願意溫柔地對待自己。」不需要全部做到，從一個開始就好。</p>
+
+  <div class="cards-row">
+    <div class="kcard sage">
+      <div class="kcard-title">關於身體</div>
+      <p class="kcard-body">睡前關掉螢幕，泡一杯溫熱的飲品——幫大腦切換到休息模式。走出去，哪怕只是 10 分鐘，讓陽光告訴你的神經系統：外面是安全的。吃一頓真正的飯，作為一種自我尊重。</p>
+    </div>
+    <div class="kcard warm">
+      <div class="kcard-title">關於情緒</div>
+      <p class="kcard-body">允許自己感受，而不是評判。抑鬱的時候，情緒會說很多「你很沒用」的話——試著注意這些聲音，但不要把它們當成事實。寫下三件今天存在的事，哪怕只是「今天喝了咖啡」。</p>
+    </div>
+    <div class="kcard blue">
+      <div class="kcard-title">關於節奏</div>
+      <p class="kcard-body">把一天分成更小的單位。不是「今天要做完這些」，而是「接下來一小時，我只需要做一件事」。允許有壞的一天，而不代表「又退步了」——恢復本來就不是直線。</p>
+    </div>
+  </div>
+
+  <div class="quote-warm">如果今天什麼都做不到，那也沒關係。你今天存在著，這已經足夠了。</div>
+
+  <hr class="divider">
+  <h3 class="sec-title">如何支持身邊正在經歷抑鬱的人</h3>
+
+  <table class="compare-table">
+    <thead><tr><th>避免說</th><th>可以改說</th></tr></thead>
+    <tbody>
+      <tr><td class="avoid">「振作一點！」</td><td class="better">「我知道你現在很累，我陪著你」</td></tr>
+      <tr><td class="avoid">「很多人比你慘」</td><td class="better">「你的感受是真實的，不需要比較」</td></tr>
+      <tr><td class="avoid">「去運動就好了」</td><td class="better">「有沒有什麼我可以陪你做的小事？」</td></tr>
+      <tr><td class="avoid">「你之前不是好好的嗎？」</td><td class="better">「謝謝你告訴我，能說說最近是什麼感覺嗎？」</td></tr>
+    </tbody>
+  </table>
+
+  <hr class="divider">
+  <h3 class="sec-title">踏出第一步，怎麼做？</h3>
+  <p>「知道要求助」和「真的踏出去」之間，有一道很大的牆。特別是腦霧的狀態下，「第一步怎麼走」才是最重要的問題。</p>
+
+  <div class="firststep">
+    <div class="firststep-title">第一次求助，可以這樣做</div>
+    <div class="firststep-steps">
+      <div class="firststep-row"><div class="firststep-num">1</div><div class="firststep-text"><strong style="color:var(--ink);font-weight:500">先打給家庭醫生</strong>——告訴他「我最近情緒很低落，睡眠也有問題，想請你評估一下」。不需要說更多，他會問你。</div></div>
+      <div class="firststep-row"><div class="firststep-num">2</div><div class="firststep-text"><strong style="color:var(--ink);font-weight:500">如果不知道說什麼</strong>——可以把這本書的第一章截圖給醫生看，或者直接說「我覺得自己可能有抑鬱症的症狀」。</div></div>
+      <div class="firststep-row"><div class="firststep-num">3</div><div class="firststep-text"><strong style="color:var(--ink);font-weight:500">如果不想一個人去</strong>——可以請信任的人陪你。陪你去診所、陪你坐在候診室，有時候只是有人在旁邊，就會容易很多。</div></div>
+      <div class="firststep-row"><div class="firststep-num">4</div><div class="firststep-text"><strong style="color:var(--ink);font-weight:500">如果今天做不到</strong>——那就今天不做。把這個想法放在心裡，告訴自己「明天，或者後天，我會試試看」。</div></div>
+    </div>
+  </div>
+
+  <div class="resource-section">
+    <div class="resource-title">香港本地支援資源</div>
+    <div class="resource-list">
+      <div class="resource-item">
+        <div class="resource-name">撒瑪利亞防止自殺會</div>
+        <div class="resource-detail">24 小時危機熱線，有人接聽，不需要「真的想自殺」才能打</div>
+        <div class="resource-tel">2389 2222</div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-name">撒瑪利亞傾心熱線</div>
+        <div class="resource-detail">情緒支援，可以說粵語，也可以只是說「我今天很難受」</div>
+        <div class="resource-tel">2382 0000</div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-name">社會福利署熱線</div>
+        <div class="resource-detail">可查詢社區精神健康服務及轉介資源</div>
+        <div class="resource-tel">2343 2255</div>
+      </div>
+      <div class="resource-item">
+        <div class="resource-name">醫管局精神科門診</div>
+        <div class="resource-detail">可由家庭醫生轉介，或直接到急症室尋求評估</div>
+        <div class="resource-tel">1800（醫管局熱線）</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chapter-end">
+    <p>與抑鬱共處，是一條需要耐心的路。它需要你對自己溫柔，也需要身邊的人願意理解而非評判。</p>
+    <p>每一個小小的善意——對自己的，或對身邊人的——都在悄悄構建那條走回來的橋。</p>
+  </div>
+
+  <div class="reflect-wrap">
+    <button class="reflect-toggle" onclick="toggleReflect(this)">💭 讀完這章，想寫點什麼嗎？</button>
+    <div class="reflect-body">
+      <textarea placeholder="今天，有沒有一件小事，是你願意為自己做的？"></textarea>
+      <p class="reflect-hint">文字不會被儲存或傳送，只是給你一個停下來的空間。</p>
+    </div>
+  </div>
+
+  <div class="ch-transition">
+    你已經走了很遠了。最後一章，我們一起往前看。
+    <a href="#ch5">繼續第五章 →</a>
+  </div>
+</div>
+</section>
+
+<div class="page-sep"></div>
+
+<!-- 第五章 -->
+<section id="ch5">
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-num">第五章</span>
+    <h2 class="chapter-title">往前看的希望</h2>
+    <p class="chapter-intro">走到這一章，你已經陪著這份研究走了很長的路。這最後一章，我們想一起往前看——不是要告訴你「一切都會沒事」，而是誠實地說：前方有更多的可能性，正在被打開。</p>
+  </div>
+
+  <h3 class="sec-title">除了藥物，還有哪些方法？</h3>
+
+  <div class="cards-row">
+    <div class="kcard sage">
+      <div class="kcard-title">重複經顱磁刺激（rTMS）</div>
+      <p class="kcard-body">透過磁場輕輕刺激前額葉，調節神經活動。副作用比藥物少，適合對藥物反應不佳的人。</p>
+    </div>
+    <div class="kcard warm">
+      <div class="kcard-title">正念認知療法（MBCT）</div>
+      <p class="kcard-body">有大量研究支持，能有效降低抑鬱復發的風險。核心是幫助你「觀察自己的思維，而不被思維淹沒」——在情緒風暴中，找到一個可以安頓的地方。</p>
+    </div>
+    <div class="kcard blue">
+      <div class="kcard-title">線上心理支持</div>
+      <p class="kcard-body">越來越多有科學根據的 App 和線上諮詢平台，讓支持可以在更多時間、更多地方觸及到需要的人。</p>
+    </div>
+    <div class="kcard sage">
+      <div class="kcard-title">同儕支持</div>
+      <p class="kcard-body">與「曾有相似經歷」的人連結，有時候能提供專業人員無法完全替代的理解感。你不孤單這件事，在這裡會變得非常真實。</p>
+    </div>
+  </div>
+
+  <div class="quote-block">如果一種方式對你沒有效，這不是你的問題——而是提醒我們，每個人的大腦都是獨特的，值得找到最適合自己的那一條路。</div>
+
+  <hr class="divider">
+  <h3 class="sec-title">科學還在往前走</h3>
+  <p>同樣重要的，是整個社會對心理健康的理解，正在緩慢但真實地改變——</p>
+  <p>越來越多人願意說「我在接受心理治療」；越來越多故事被說出來，打破了那層讓人不敢開口的沉默。這些改變，為每一個正在經歷抑鬱的人，創造了一個更安全、更被理解的世界。</p>
+
+  <div class="chapter-end">
+    <p>我們不需要等到「完全好了」才算恢復。</p>
+    <p>有時候，恢復就藏在今天比昨天多睡了一小時裡；藏在你願意告訴一個人「我最近不太好」裡；藏在你讀完了這份研究，對自己多了一點理解裡。</p>
+  </div>
+
+  <div class="reflect-wrap">
+    <button class="reflect-toggle" onclick="toggleReflect(this)">💭 讀完整本書，想寫點什麼嗎？</button>
+    <div class="reflect-body">
+      <textarea placeholder="讀完了這本書，你現在感覺是……"></textarea>
+      <p class="reflect-hint">文字不會被儲存或傳送，只是給你一個停下來的空間。</p>
+    </div>
+  </div>
+
+  <div class="ch-transition">
+    你讀完了。這本身就已經是一件事了。
+    <a href="#epilogue">讀最後的話 →</a>
+  </div>
+</div>
+</section>
+
+<div class="page-sep"></div>
+
+<!-- 結語 -->
+<section class="epilogue" id="epilogue">
+  <div class="epilogue-inner">
+    <h2 class="epilogue-title">願你被溫柔以待</h2>
+    <p>這份研究從「被理解」開始，走過了大腦的科學、成因的探索、共處的方式，最終來到希望的邊緣。</p>
+    <p>抑鬱是真實的，痛苦是真實的，但恢復的可能性，同樣是真實的。</p>
+    <p>你不需要一個人扛著這一切。科學在你身邊，支持在你身邊，而這份研究，也希望成為你某一個艱難時刻裡，一個輕輕的陪伴。</p>
+    <p>願每一個正在走這段路的人，都能在某一天，回頭看見自己走了多遠。</p>
+    <p class="epilogue-final">願你被溫柔以待，也願你學會溫柔以待自己。</p>
+    <p class="date">最後更新：2026 年 4 月 17 日</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+function toggleReflect(btn){
+  const body = btn.nextElementSibling;
+  body.classList.toggle('open');
+  btn.textContent = body.classList.contains('open') ? '💭 收起' : '💭 讀完這章，想寫點什麼嗎？';
+}
+
+const dots = document.querySelectorAll('.spine-dot');
+const secs = ['cover','ch1','ch2','ch3','ch4','ch5','epilogue'];
+
+function updateDots(){
+  let current = 0;
+  secs.forEach((id,i)=>{
+    const el = document.getElementById(id);
+    if(el){
+      const rect = el.getBoundingClientRect();
+      if(rect.top <= window.innerHeight/2) current = i;
+    }
+  });
+  dots.forEach((d,i)=>d.classList.toggle('active', i===current));
+}
+
+dots.forEach((dot,i)=>{
+  dot.addEventListener('click',()=>{
+    const el = document.getElementById(secs[i]);
+    if(el) el.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+const prog = document.getElementById('prog');
+window.addEventListener('scroll',()=>{
+  const h = document.documentElement;
+  const pct = (h.scrollTop/(h.scrollHeight-h.clientHeight))*100;
+  prog.style.width = Math.min(100,pct)+'%';
+  updateDots();
+},{passive:true});
+
+updateDots();
+</script>
+</body>
+</html>
