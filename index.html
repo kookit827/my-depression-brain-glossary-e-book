@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>抑鬱大腦研究｜溫柔互動學習空間</title>
+  <style>
+    :root{
+      --bg1:#f2fbff;
+      --bg2:#ecfaf4;
+      --card:#ffffffee;
+      --ink:#2b3f49;
+      --muted:#6a7f8a;
+      --primary:#71c6b8;
+      --primary2:#9adcd1;
+      --blue:#9ec8f1;
+      --line:#d9ece8;
+      --ok:#69c79f;
+      --radius:22px;
+      --shadow:0 12px 30px rgba(72,112,122,.15);
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+      color:var(--ink);
+      background:linear-gradient(135deg,var(--bg1),var(--bg2));
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    .container{width:min(1100px,94vw);margin:18px auto 28px;}
+    .glass{
+      background:var(--card);
+      border:1px solid #e1f0ec;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(7px);
+    }
+
+    .hidden{display:none !important}
+
+    /* 首頁 */
+    .home{padding:28px 22px;display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:center}
+    .hero-title{font-size:clamp(28px,4.2vw,44px);margin:0 0 10px;color:#2f5967;letter-spacing:.5px}
+    .hero-sub{font-size:15px;line-height:1.9;margin:0 0 16px;color:#466571}
+
+    .mood-title{font-size:14px;color:#50707a;margin:0 0 8px}
+    .moods{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+    .mood-btn{
+      border:1px solid #cce9e2;background:#f6fffd;color:#3f6771;
+      border-radius:999px;padding:8px 12px;cursor:pointer;font-size:14px;transition:.2s;
+    }
+    .mood-btn:hover,.mood-btn.active{background:#e9faf6;border-color:#9dd8cd;transform:translateY(-1px)}
+
+    .start-btn{
+      border:none;border-radius:14px;padding:12px 18px;cursor:pointer;
+      font-size:16px;color:#fff;
+      background:linear-gradient(90deg,var(--primary),var(--blue));
+      box-shadow:0 9px 18px rgba(86,159,157,.26);transition:.2s;
+    }
+    .start-btn:hover{transform:translateY(-1px)}
+
+    .pet-card{padding:16px;border:1px solid #d3ebe5;border-radius:18px;background:#f5fffd;text-align:center}
+    .pet{width:132px;height:132px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;font-size:66px;
+      background:radial-gradient(circle at 34% 30%,#fff,#dff5ef);border:1px solid #c7e8df;animation:float 3.2s ease-in-out infinite}
+    .pet-msg{font-size:14px;line-height:1.7;color:#4e707a;background:#fff;border:1px solid #dcefe9;border-radius:14px;padding:10px}
+
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+    /* 學習區 */
+    .topbar{position:sticky;top:10px;z-index:10;display:flex;gap:12px;align-items:center;padding:12px 14px;margin-bottom:12px}
+    .progress-wrap{flex:1}
+    .progress-label{font-size:13px;color:var(--muted);margin-bottom:6px}
+    .progress{height:12px;border-radius:999px;background:#e9f6f3;border:1px solid #d5ebe5;overflow:hidden}
+    .progress > span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--blue));transition:width .35s}
+    .badge{font-size:13px;color:#4d6f79;background:#f1fbf8;border:1px solid #d4ece6;border-radius:999px;padding:7px 11px;white-space:nowrap}
+
+    .layout{display:grid;grid-template-columns:1fr 320px;gap:12px}
+    .card{padding:18px;min-height:650px;position:relative;overflow:hidden}
+    .card::after{content:"";position:absolute;right:-35px;top:-35px;width:160px;height:160px;background:radial-gradient(circle,#e1f5f1 0%,transparent 70%)}
+
+    .tag{display:inline-block;font-size:12px;color:#2f6872;background:#e9faf6;border:1px solid #bde6dd;border-radius:999px;padding:4px 10px;margin-bottom:10px}
+    .ctitle{margin:0 0 8px;font-size:25px;color:#2f5967}
+    .core{margin:0 0 12px;line-height:1.92;color:#355560;font-size:15px;background:#f9fffe;border:1px solid #dcefea;border-radius:14px;padding:12px}
+    .stitle{font-size:15px;color:#2f6670;margin:12px 0 8px}
+    .bullets{margin:0;padding-left:18px;line-height:1.85;color:#385862}
+    .quote{margin-top:10px;padding:10px 12px;background:#f1fbf9;border-left:4px solid var(--primary2);border-radius:9px;color:#2f5a64;line-height:1.75}
+
+    .mini-box{margin-top:12px;padding:12px;border-radius:12px;background:#f4faff;border:1px dashed #cfe5f7;color:#3e6270;line-height:1.8}
+
+    .interact{margin-top:12px;padding:12px;border-radius:14px;border:1px solid #dcefea;background:#fcfffe;display:grid;gap:10px}
+    .check-row{display:flex;align-items:center;gap:8px;color:#42646e;font-size:14px}
+    .check-row input{width:18px;height:18px;accent-color:var(--ok)}
+
+    .mood-row{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{border:1px solid #cfe9e3;background:#f6fffd;color:#446872;border-radius:999px;padding:6px 10px;font-size:13px;cursor:pointer;transition:.2s}
+    .chip.active,.chip:hover{background:#e9faf5;border-color:#9ed7cb}
+
+    .reflect{width:100%;min-height:82px;border:1px solid #d8ece7;border-radius:12px;padding:10px 11px;font-size:14px;resize:vertical;line-height:1.7;color:#35545f;background:#fff}
+
+    .btns{display:flex;flex-wrap:wrap;gap:8px}
+    .btn{border:none;border-radius:12px;padding:9px 13px;cursor:pointer;font-size:14px;transition:.2s}
+    .btn.primary{background:linear-gradient(90deg,var(--primary),var(--blue));color:#fff}
+    .btn.soft{background:#eaf8f6;color:#2e6771;border:1px solid #bfe7de}
+    .btn:hover{transform:translateY(-1px)}
+
+    .side{padding:14px}
+    .side .pet2{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-size:38px;margin:0 auto 10px;background:radial-gradient(circle at 35% 30%,#fff,#dff5ef);border:1px solid #cae9e1;animation:float 3s ease-in-out infinite}
+    .side h4{margin:4px 0 8px;color:#2f5f69}
+    .tips{margin:0;padding-left:18px;line-height:1.8;color:#4c6f79;font-size:14px}
+    .spark{margin-top:12px;padding:10px;border-radius:12px;background:#fff6e9;border:1px solid #ffe2bb;color:#815f36;font-size:13px;line-height:1.7}
+
+    .nav{display:flex;justify-content:space-between;gap:8px;margin-top:14px}
+
+    .toast{
+      position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);
+      background:#ffffffef;border:1px solid #cfe8e1;border-radius:999px;padding:10px 14px;
+      color:#3a5f69;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.3s;z-index:50
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* 反思日記 */
+    .journal{padding:16px}
+    .journal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+    .journal-title{margin:0;color:#2f5f69;font-size:24px}
+    .journal-sub{margin:0 0 10px;color:#56747e;line-height:1.8;font-size:14px}
+    .journal-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+    .select{
+      border:1px solid #cfe7e2;border-radius:10px;padding:8px 10px;background:#fff;color:#3d616b;font-size:14px;
+    }
+    .journal-list{display:grid;gap:10px;max-height:62vh;overflow:auto;padding-right:4px}
+    .j-item{border:1px solid #dcefea;background:#fbfffe;border-radius:12px;padding:10px}
+    .j-tag{display:inline-block;font-size:12px;background:#eaf9f6;border:1px solid #bee7dd;color:#2e6872;border-radius:999px;padding:3px 9px;margin-bottom:6px}
+    .j-text{white-space:pre-wrap;line-height:1.8;color:#395963;font-size:14px}
+    .empty{padding:20px;border:1px dashed #cfe8e2;border-radius:12px;background:#f8fefd;color:#62808a;line-height:1.8}
+
+    /* 最後信件 */
+    .letter{background:#fffdf9;border:1px solid #f2e6d3;border-radius:14px;padding:12px;color:#5f4d35;line-height:1.8}
+
+
+    @media (max-width: 980px){
+      .container{width:min(1100px,96vw);margin:12px auto 20px;}
+      .home{grid-template-columns:1fr;padding:20px 16px;gap:14px}
+      .layout{grid-template-columns:1fr}
+      .card{min-height:auto}
+      .topbar{top:8px;padding:10px;flex-wrap:wrap}
+      .progress-wrap{min-width:100%}
+      .badge{font-size:12px;padding:7px 10px}
+    }
+
+    @media (max-width: 768px){
+      body{font-size:16px;line-height:1.7}
+      .container{width:94vw;margin:10px auto calc(16px + env(safe-area-inset-bottom));}
+
+      .hero-title{font-size:clamp(25px,7.2vw,34px);line-height:1.3}
+      .hero-sub{font-size:15px;line-height:1.9}
+
+      .moods{gap:8px}
+      .mood-btn{
+        min-height:42px;
+        padding:9px 12px;
+        font-size:14px;
+      }
+
+      .start-btn{
+        width:100%;
+        min-height:46px;
+        font-size:16px;
+      }
+
+      .topbar{
+        position:sticky;
+        top:6px;
+        padding:10px;
+        gap:8px;
+      }
+
+      .progress-label{font-size:12px}
+      .progress{height:11px}
+
+      .card{padding:14px}
+      .ctitle{font-size:22px;line-height:1.4}
+      .core{font-size:15px;line-height:1.9;padding:11px}
+      .bullets{line-height:1.85;padding-left:20px}
+      .mini-box,.quote{font-size:14px}
+
+      .interact{padding:11px;gap:11px}
+      .check-row{font-size:15px}
+      .check-row input{width:20px;height:20px}
+
+      .chip{
+        min-height:38px;
+        padding:7px 11px;
+        font-size:14px;
+      }
+
+      .reflect{
+        min-height:96px;
+        font-size:16px;
+      }
+
+      .btns{gap:9px}
+      .btn{
+        min-height:42px;
+        padding:10px 14px;
+        font-size:15px;
+      }
+
+      .nav{gap:10px}
+      .nav .btn{flex:1}
+
+      .side{padding:12px}
+      .tips{font-size:14px}
+      .spark{font-size:13px}
+
+      .journal{padding:12px}
+      .journal-title{font-size:22px}
+      .journal-sub{font-size:14px}
+      .journal-tools{gap:8px}
+      .select{
+        min-height:40px;
+        font-size:15px;
+        flex:1;
+      }
+      .journal-tools .btn{flex:1}
+      .journal-list{max-height:none}
+
+      .toast{bottom:16px;width:min(92vw,520px);text-align:center}
+    }
+
+    @media (max-width: 420px){
+      .home{padding:18px 12px}
+      .hero-sub{font-size:14px}
+      .card{padding:12px}
+      .ctitle{font-size:20px}
+      .btn,.start-btn{border-radius:11px}
+      .tag{font-size:11px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 首頁 -->
+    <section id="home" class="glass home">
+      <div>
+        <h1 class="hero-title">《抑鬱大腦研究》<br/>溫柔互動學習空間</h1>
+        <p class="hero-sub">這裡不是考試，也不是打卡任務。這裡像一位溫柔小夥伴，陪你一步一步理解抑鬱、理解大腦，也理解你自己。你可以慢慢看、慢慢感受，照著自己的節奏前進就好。</p>
+
+        <p class="mood-title">先選一個今天的心情：</p>
+        <div class="moods" id="homeMoods">
+          <button class="mood-btn" data-mood="平靜🙂">平靜 🙂</button>
+          <button class="mood-btn" data-mood="有點累😮‍💨">有點累 😮‍💨</button>
+          <button class="mood-btn" data-mood="焦慮😟">焦慮 😟</button>
+          <button class="mood-btn" data-mood="低落🌧️">低落 🌧️</button>
+          <button class="mood-btn" data-mood="想被陪伴🫶">想被陪伴 🫶</button>
+        </div>
+        <button id="startBtn" class="start-btn">開始今天的溫柔學習</button>
+      </div>
+
+      <div class="pet-card">
+        <div class="pet">🦦</div>
+        <div class="pet-msg" id="petWelcome">嗨，我是小海獺「暖暖」。今天我會陪你一張卡片、一張卡片慢慢走。你不需要很快，只要願意開始就很好。</div>
+      </div>
+    </section>
+
+    <!-- 學習區 -->
+    <section id="learn" class="hidden">
+      <div class="glass topbar">
+        <div class="progress-wrap">
+          <div class="progress-label" id="progressLabel">學習進度 0%</div>
+          <div class="progress"><span id="bar"></span></div>
+        </div>
+        <div class="badge" id="score">完成 0 / 7</div>
+        <div class="badge" id="points">暖心值 0 ✨</div>
+        <button class="btn soft" id="openJournalBtn">我的反思日記</button>
+      </div>
+
+      <div class="layout" id="learnLayout">
+        <article class="glass card" id="cardArea"></article>
+
+        <aside class="glass side">
+          <div class="pet2">🦦</div>
+          <h4>暖暖的小提醒</h4>
+          <ul class="tips" id="tips">
+            <li>先看完核心段落，再做小互動。</li>
+            <li>反思不用寫很多，真實就好。</li>
+            <li>完成每張卡，你都在往前。</li>
+          </ul>
+          <div class="spark" id="spark">小驚喜：連續完成 3 張卡，會解鎖新的鼓勵句 🌟</div>
+          <div style="margin-top:10px;display:flex;justify-content:center;">
+            <button class="btn soft" id="openJournalBtnSide">打開我的反思日記</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 反思日記頁 -->
+    <section id="journal" class="glass journal hidden">
+      <div class="journal-head">
+        <h2 class="journal-title">我的反思日記</h2>
+        <button class="btn soft" id="backToLearnBtn">回到卡片學習</button>
+      </div>
+      <p class="journal-sub">你在每張卡片保存的反思，都會出現在這裡。可按章節查看，也可以一鍵複製或匯出成 <code>.txt</code>。</p>
+
+      <div class="journal-tools">
+        <select class="select" id="journalFilter">
+          <option value="all">全部章節</option>
+        </select>
+        <button class="btn soft" id="copyJournalBtn">複製目前內容</button>
+        <button class="btn primary" id="exportJournalBtn">匯出 .txt</button>
+      </div>
+
+      <div id="journalList" class="journal-list"></div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const cards = [
+      {
+        id:"ch1",
+        tag:"第一章",
+        title:"認識抑鬱——從被理解開始",
+        core:"很多人第一次靠近抑鬱時，最先遇到的不是醫學名詞，而是那種說不上來的疲憊：睡了也像沒睡、想做事卻提不起勁、明明在人群裡卻像隔著一層玻璃。這些感受常被誤解成懶惰或矯情，但其實它們可能是大腦在長期壓力與能量透支後發出的訊號。理解抑鬱的第一步，不是先要求自己振作，而是承認：我真的很辛苦，而且我值得被認真對待。當一個人不再急著責怪自己，恢復就會有了第一道入口。",
+        points:[
+          "抑鬱不是意志薄弱，而是可被理解的身心狀態。",
+          "悲傷與抑鬱可能重疊，不必急著替自己貼標籤。",
+          "被看見、被理解，是恢復的重要起點。"
+        ],
+        line:"你現在的疲憊，不是失敗，而是需要照顧的訊號。",
+        summary:"小結：這一章想告訴你，抑鬱不是你的錯。只要你願意承認辛苦、願意接受支持，恢復就已經在發生。",
+        reflectionPrompt:"今天回想一個『我其實很累』的瞬間。若那時有人溫柔地理解你，你最想聽到哪一句話？",
+        actionPrompt:"今天的小行動：把一句溫柔話寫給自己，例如『我正在盡力，這已經很不容易。』"
+      },
+      {
+        id:"ch2",
+        tag:"第二章",
+        title:"抑鬱的大腦科學",
+        core:"抑鬱的痛苦不只是心理感受，也有真實的大腦機制。血清素像情緒穩定器，多巴胺像動力與愉悅的訊號，去甲腎上腺素像專注與應壓的燃料；當這些系統長期失衡，人就可能同時出現低落、失樂、疲憊與注意力下降。另一方面，前額葉、杏仁核、海馬體等腦區在壓力下也會改變運作模式，讓大腦更容易進入警戒與自責循環。可貴的是，神經可塑性告訴我們：大腦會改變，也能被重建。透過治療、睡眠、運動與支持，神經迴路可以一點點回到平衡。",
+        points:[
+          "抑鬱有生物學基礎，不只是『想太多』。",
+          "化學物質與情緒迴路可透過介入逐步改善。",
+          "神經可塑性是恢復最堅實的科學希望。"
+        ],
+        line:"你的大腦沒有壞掉，它只是太累了，正在等待被修復。",
+        summary:"小結：知道科學不是為了恐嚇自己，而是為了把自責換成理解，把無助換成可行的行動。",
+        reflectionPrompt:"最近你最明顯的狀態是低落、無力、失去興趣，還是難以專注？它可能對應到哪些神經負荷？",
+        actionPrompt:"今天的小行動：做 10 分鐘散步或深呼吸，當作給神經系統的一次溫柔重啟。"
+      },
+      {
+        id:"ch3",
+        tag:"第三章",
+        title:"抑鬱為什麼會發生",
+        core:"抑鬱通常不是單一原因造成，而是遺傳、生理、環境壓力與生活方式交互作用的結果。遺傳可能帶來敏感傾向，但傾向不等於命運；童年創傷、重大失去、長期高壓可能讓壓力系統長時間緊繃；睡眠失衡、慢性疲勞、社交孤立則會讓大腦更難恢復。這些因素像齒輪一樣彼此牽動，因此『不是你的錯』不是安慰，而是更接近事實的理解。當我們用系統觀來看待自己，就能把力氣從自責轉回調整：找到最可行的一小步，慢慢重建穩定與安全感。",
+        points:[
+          "成因是多因素交織，不是個人失敗。",
+          "遺傳是風險，不是判決。",
+          "看見可調整環節，就看見恢復方向。"
+        ],
+        line:"你承受的，遠比你想像的多；你已經很努力了。",
+        summary:"小結：理解成因不是為了追究責任，而是為了找出『可以改變的地方』，把希望變得具體。",
+        reflectionPrompt:"若把壓力分成『可控』與『不可控』，你現在最想先調整哪一個可控因素？",
+        actionPrompt:"今天的小行動：寫一張『壓力地圖』，圈出本週只做一件微調。"
+      },
+      {
+        id:"ch4",
+        tag:"第四章",
+        title:"如何溫柔地與抑鬱共處",
+        core:"與抑鬱共處，不是放棄，也不是對痛苦妥協；它是一種更可持續的恢復策略：在需要時求助、在疲憊時休息、在混亂時先做最小可行行動。當症狀持續兩週以上並影響生活功能，或出現自傷念頭，尋求專業協助是勇敢且負責任的選擇。日常裡，睡前小儀式、規律進食、短時散步、降低自我批評，這些看似微小的行動都能逐步修復神經節律。若你在陪伴他人，請記得『在場』常比『說教』更有力量，也別忘了照顧你自己。",
+        points:[
+          "共處重點是陪伴與調節，不是硬撐與對抗。",
+          "越早求助，越能降低惡化與復發風險。",
+          "小步驟、可持續，比一次做到完美更有效。"
+        ],
+        line:"你不必立刻變好，只要願意照顧自己，就已經在路上。",
+        summary:"小結：恢復不是直線，你可以有起伏；重要的是，每次起伏後都願意再回來照顧自己。",
+        reflectionPrompt:"今天你最需要的是休息、連結、還是求助？如果只能選一件，會是什麼？",
+        actionPrompt:"今天的小行動：做一個 15 分鐘『不評分的自我照顧時段』。"
+      },
+      {
+        id:"ch5",
+        tag:"第五章",
+        title:"往前看的希望",
+        core:"希望不是一句空話，而是來自可驗證的變化：新興治療方法更精準、心理支持形式更多元、社會對心理健康的理解也在慢慢打開。神經調控、正念認知療法、數位工具與同儕支持，讓不同需求的人有更多選擇。即使如此，恢復仍需要耐心，因為大腦與生活的重整都需要時間。真正穩健的希望，並不是『我明天就會完全好』，而是『我知道我可以一步一步變得更可承受』。當你願意持續做小而實際的照顧，未來就會慢慢從模糊變清晰。",
+        points:[
+          "方法越來越多，代表你不必被單一路徑綁住。",
+          "若某種方式無效，不是你的問題，而是需要更合適的組合。",
+          "耐心與持續，是希望落地的關鍵。"
+        ],
+        line:"慢慢變好，不是慢，而是扎實。",
+        summary:"小結：未來不是沒有不確定，而是即使有不確定，你仍然有很多可以依靠的資源與路徑。",
+        reflectionPrompt:"對你而言，『有希望』最具體的樣子是什麼？這週可以看見哪一個小徵兆？",
+        actionPrompt:"今天的小行動：寫下一個『可被觀察的希望指標』並放進行事曆。"
+      },
+      {
+        id:"ending",
+        tag:"全書結語",
+        title:"把理解，變成長久的陪伴",
+        core:"從被理解出發，到理解大腦、看見成因、學會共處、走向希望，這份研究想交給你的不是一套完美答案，而是一種更溫柔、更科學的看待方式。痛苦是真實的，恢復也同樣真實；你不必靠逞強證明價值，也不必把所有重量都獨自扛起來。當你願意求助、願意休息、願意在低谷裡做一件小小照顧行動，改變就會在安靜處發生。請把自己放在一個值得被好好對待的位置，因為你本來就值得。",
+        points:[
+          "你不需要一個人走完整段路。",
+          "每一個小照顧，都在改變神經與生活節奏。",
+          "恢復可以慢，但不會白費。"
+        ],
+        line:"願你被溫柔以待，也願你學會溫柔以待自己。",
+        summary:"小結：你已經走了很遠，請記得為自己按下一次肯定。",
+        reflectionPrompt:"回顧這段學習，你最想留下的一句話是什麼？",
+        actionPrompt:"今天的小行動：把那句話設成手機備忘錄，讓未來的你每天都看見。"
+      },
+      {
+        id:"letter",
+        tag:"給未來的自己",
+        title:"給未來的自己的一封信",
+        core:"請在下面寫幾句給未來自己的話：可以是你今天看見的改變、你想守住的溫柔、或你希望未來低潮時能被提醒的內容。這封信不需要華麗，只需要真實。當你願意在清醒時替未來的自己留下光，未來某個辛苦的夜晚，它可能就會成為那盞剛剛好的小燈。",
+        points:[
+          "這封信是你送給未來自己的支持系統。",
+          "內容可以很短，只要真誠。",
+          "你現在寫下的話，將在未來保護你。"
+        ],
+        line:"你正在成為那個，懂得照顧自己的人。",
+        summary:"完成這一頁後，你已完成整個互動學習旅程。謝謝你沒有放棄自己。",
+        reflectionPrompt:"此刻的你，最想讓未來的自己記得什麼？",
+        actionPrompt:"今天的小行動：寫下三句給未來自己的話，並儲存。"
+      }
+    ];
+
+    const state = {
+      idx: 0,
+      homeMood: "",
+      cardDone: {},
+      cardMood: {},
+      cardReflect: {},
+      points: 0
+    };
+
+    const encourage = [
+      "你願意停下來照顧自己，真的很不容易。",
+      "每一個小步驟，都在替你的大腦重新鋪路。",
+      "慢慢來沒有關係，你已經在往前。",
+      "你不是一個人，這一路都有人願意陪你。",
+      "今天的你，也值得被溫柔擁抱。"
+    ];
+
+    const petTalk = [
+      "先深呼吸一下，我們慢慢看就好。",
+      "你正在做一件很重要的事：理解自己。",
+      "不用一次做很多，一點點就很棒了。",
+      "有起伏很正常，我會一直陪著你。",
+      "你已經比剛開始更靠近希望了。"
+    ];
+
+    // Elements
+    const home = document.getElementById('home');
+    const learn = document.getElementById('learn');
+    const journal = document.getElementById('journal');
+    const learnLayout = document.getElementById('learnLayout');
+    const startBtn = document.getElementById('startBtn');
+    const homeMoods = document.getElementById('homeMoods');
+    const cardArea = document.getElementById('cardArea');
+    const bar = document.getElementById('bar');
+    const progressLabel = document.getElementById('progressLabel');
+    const score = document.getElementById('score');
+    const pointsEl = document.getElementById('points');
+    const tips = document.getElementById('tips');
+    const spark = document.getElementById('spark');
+    const toast = document.getElementById('toast');
+    const openJournalBtn = document.getElementById('openJournalBtn');
+    const openJournalBtnSide = document.getElementById('openJournalBtnSide');
+    const backToLearnBtn = document.getElementById('backToLearnBtn');
+    const journalFilter = document.getElementById('journalFilter');
+    const journalList = document.getElementById('journalList');
+    const copyJournalBtn = document.getElementById('copyJournalBtn');
+    const exportJournalBtn = document.getElementById('exportJournalBtn');
+
+    function showToast(text){
+      toast.textContent = text;
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'),1800);
+    }
+
+    function save(){
+      localStorage.setItem('depression-learning-space', JSON.stringify(state));
+    }
+
+    function load(){
+      const raw = localStorage.getItem('depression-learning-space');
+      if(!raw) return;
+      try{
+        const data = JSON.parse(raw);
+        Object.assign(state, data);
+      }catch(e){}
+    }
+
+    function updateProgress(){
+      const doneCount = Object.values(state.cardDone).filter(Boolean).length;
+      const total = cards.length;
+      const pct = Math.round((doneCount/total)*100);
+      bar.style.width = pct + '%';
+      progressLabel.textContent = `學習進度 ${pct}%`;
+      score.textContent = `完成 ${doneCount} / ${total}`;
+      pointsEl.textContent = `暖心值 ${state.points || 0} ✨`;
+
+      if(doneCount >= 3 && doneCount < 6){
+        spark.textContent = '小驚喜已解鎖：你已連續完成 3 張卡！🌟 你的穩定與耐心，正在默默修復你。';
+      }else if(doneCount >= 6){
+        spark.textContent = '終極小驚喜：幾乎完成全書！🧸 請記得，你能走到這裡，真的很了不起。';
+      }
+    }
+
+    function renderCard(){
+      const c = cards[state.idx];
+      const done = !!state.cardDone[c.id];
+      const mood = state.cardMood[c.id] || '';
+      const reflect = state.cardReflect[c.id] || '';
+
+      const moodChips = ['很有共鳴💙','被安撫了🌿','有點沉重🌧️','想再讀一次📖','想練習看看🫶']
+        .map(m=>`<button class="chip ${m===mood?'active':''}" data-chip="${m}">${m}</button>`).join('');
+
+      const letterBlock = c.id==='letter' ? `
+        <h4 class="stitle">寫給未來的信</h4>
+        <div class="letter">
+          <textarea id="futureLetter" class="reflect" style="min-height:120px" placeholder="未來的我，當你再次感到疲憊時，請記得......">${localStorage.getItem('future-letter') || ''}</textarea>
+          <div style="margin-top:8px"><button class="btn soft" id="saveLetter">儲存這封信</button></div>
+        </div>
+      ` : '';
+
+      cardArea.innerHTML = `
+        <div class="tag">${c.tag}｜卡片 ${state.idx+1}/${cards.length}</div>
+        <h2 class="ctitle">${c.title}</h2>
+
+        <p class="core">${c.core}</p>
+
+        <h3 class="stitle">重要重點</h3>
+        <ul class="bullets">
+          ${c.points.map(p=>`<li>${p}</li>`).join('')}
+        </ul>
+
+        <div class="quote"><strong>給自己的一句話：</strong>${c.line}</div>
+
+        <div class="mini-box">
+          <strong>章節小結：</strong>${c.summary}<br/>
+          <strong>反思練習：</strong>${c.reflectionPrompt}<br/>
+          <strong>今天的小行動：</strong>${c.actionPrompt}
+        </div>
+
+        <div class="interact">
+          <label class="check-row"><input type="checkbox" id="doneCheck" ${done?'checked':''}/> 我完成這張卡片了</label>
+
+          <div>
+            <div style="font-size:13px;color:#597983;margin-bottom:6px">此刻心情（可多次切換）</div>
+            <div class="mood-row" id="chipWrap">${moodChips}</div>
+          </div>
+
+          <div>
+            <div style="font-size:13px;color:#597983;margin-bottom:6px">寫一點點反思（1～3 句就很好）</div>
+            <textarea id="reflectText" class="reflect" placeholder="今天我想對自己說......">${reflect}</textarea>
+          </div>
+
+          <div class="btns">
+            <button class="btn soft" id="encBtn">給我一點小鼓勵</button>
+            <button class="btn primary" id="saveBtn">保存這張卡片紀錄</button>
+          </div>
+        </div>
+
+        ${letterBlock}
+
+        <div class="nav">
+          <button class="btn soft" id="prevBtn" ${state.idx===0?'disabled':''}>上一張</button>
+          <button class="btn primary" id="nextBtn">${state.idx===cards.length-1?'完成旅程':'下一張卡片'}</button>
+        </div>
+      `;
+
+      bindCardEvents(c);
+      updateTips();
+      updateProgress();
+    }
+
+    function updateTips(){
+      const tip = petTalk[(state.idx + (state.points||0)) % petTalk.length];
+      tips.innerHTML = `
+        <li>${tip}</li>
+        <li>看完核心段落後，再做互動，吸收會更深。</li>
+        <li>你不用追求完美，只要保持真誠就很好。</li>
+      `;
+    }
+
+    function getJournalEntries(){
+      return cards
+        .map(card => {
+          const text = (state.cardReflect[card.id] || '').trim();
+          if(!text) return null;
+          return {
+            id: card.id,
+            tag: card.tag,
+            title: card.title,
+            text
+          };
+        })
+        .filter(Boolean);
+    }
+
+    function buildJournalFilter(){
+      if(!journalFilter) return;
+      const tags = [...new Set(cards.map(c => c.tag))];
+      journalFilter.innerHTML = '<option value="all">全部章節</option>' +
+        tags.map(tag => `<option value="${tag}">${tag}</option>`).join('');
+    }
+
+    function renderJournal(){
+      if(!journalList) return;
+      const filter = journalFilter?.value || 'all';
+      const entries = getJournalEntries();
+      const filtered = filter === 'all' ? entries : entries.filter(e => e.tag === filter);
+
+      if(filtered.length === 0){
+        journalList.innerHTML = '<div class="empty">目前還沒有可顯示的反思內容。<br/>你可以先回到卡片頁，按「保存這張卡片紀錄」後再回來看。</div>';
+        return;
+      }
+
+      journalList.innerHTML = filtered.map(e => `
+        <article class="j-item">
+          <div class="j-tag">${e.tag}</div>
+          <h4 style="margin:0 0 6px;color:#345b66">${e.title}</h4>
+          <div class="j-text">${e.text}</div>
+        </article>
+      `).join('');
+    }
+
+    function journalTextForExport(){
+      const filter = journalFilter?.value || 'all';
+      const entries = getJournalEntries();
+      const filtered = filter === 'all' ? entries : entries.filter(e => e.tag === filter);
+      if(!filtered.length) return '';
+
+      const header = `《抑鬱大腦研究》我的反思日記\n匯出時間：${new Date().toLocaleString()}\n篩選：${filter === 'all' ? '全部章節' : filter}\n\n`;
+      const body = filtered.map((e, i) => `${i+1}. [${e.tag}] ${e.title}\n${e.text}\n`).join('\n');
+      const futureLetter = (localStorage.getItem('future-letter') || '').trim();
+      const letterBlock = futureLetter ? `\n給未來的自己的一封信\n${futureLetter}\n` : '';
+      return header + body + letterBlock;
+    }
+
+    function openJournal(){
+      learnLayout?.classList.add('hidden');
+      journal?.classList.remove('hidden');
+      buildJournalFilter();
+      renderJournal();
+    }
+
+    function backToLearn(){
+      journal?.classList.add('hidden');
+      learnLayout?.classList.remove('hidden');
+    }
+
+    function bindJournalEvents(){
+      openJournalBtn?.addEventListener('click', ()=>{
+        openJournal();
+      });
+
+      openJournalBtnSide?.addEventListener('click', ()=>{
+        openJournal();
+      });
+
+      backToLearnBtn?.addEventListener('click', ()=>{
+        backToLearn();
+      });
+
+      journalFilter?.addEventListener('change', ()=>{
+        renderJournal();
+      });
+
+      copyJournalBtn?.addEventListener('click', async ()=>{
+        const txt = journalTextForExport();
+        if(!txt){
+          showToast('目前沒有可複製的反思內容');
+          return;
+        }
+        try{
+          await navigator.clipboard.writeText(txt);
+          showToast('已複製目前日記內容 ✅');
+        }catch(e){
+          showToast('複製失敗，請改用匯出 .txt');
+        }
+      });
+
+      exportJournalBtn?.addEventListener('click', ()=>{
+        const txt = journalTextForExport();
+        if(!txt){
+          showToast('目前沒有可匯出的反思內容');
+          return;
+        }
+        const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const time = new Date().toISOString().slice(0,10);
+        a.href = url;
+        a.download = `我的反思日記_${time}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast('已匯出 .txt 檔案');
+      });
+    }
+
+    function bindCardEvents(c){
+      const doneCheck = document.getElementById('doneCheck');
+      const reflectText = document.getElementById('reflectText');
+
+      doneCheck?.addEventListener('change', e=>{
+        const before = !!state.cardDone[c.id];
+        state.cardDone[c.id] = e.target.checked;
+        if(!before && e.target.checked){
+          state.points += 10;
+          showToast('完成打勾！暖心值 +10 ✨');
+        }
+        save();
+        updateProgress();
+      });
+
+      reflectText?.addEventListener('input', e=>{
+        state.cardReflect[c.id] = e.target.value;
+      });
+
+      document.querySelectorAll('[data-chip]').forEach(el=>{
+        el.addEventListener('click', ()=>{
+          state.cardMood[c.id] = el.getAttribute('data-chip');
+          save();
+          renderCard();
+        });
+      });
+
+      document.getElementById('encBtn')?.addEventListener('click', ()=>{
+        const msg = encourage[Math.floor(Math.random()*encourage.length)];
+        showToast(msg);
+        state.points += 2;
+        save();
+        updateProgress();
+      });
+
+      document.getElementById('saveBtn')?.addEventListener('click', ()=>{
+        state.cardReflect[c.id] = reflectText.value;
+        if((reflectText.value || '').trim().length >= 8){
+          state.points += 6;
+          showToast('保存成功！你認真對待自己，暖心值 +6 💫');
+        }else{
+          showToast('已保存。短短幾個字也很珍貴。');
+        }
+        save();
+        updateProgress();
+      });
+
+      document.getElementById('prevBtn')?.addEventListener('click', ()=>{
+        if(state.idx>0){ state.idx--; save(); renderCard(); }
+      });
+
+      document.getElementById('nextBtn')?.addEventListener('click', ()=>{
+        if(state.idx < cards.length-1){
+          state.idx++;
+          save();
+          renderCard();
+          showToast('我們前進一張卡片了 🌿');
+        }else{
+          showToast('你完成了整段溫柔學習旅程！謝謝你陪自己走到這裡 🫶');
+        }
+      });
+
+      if(c.id==='letter'){
+        const ta = document.getElementById('futureLetter');
+        const btn = document.getElementById('saveLetter');
+        btn?.addEventListener('click', ()=>{
+          localStorage.setItem('future-letter', ta.value || '');
+          state.points += 12;
+          save();
+          updateProgress();
+          showToast('這封信已收好，留給未來的你 💌');
+        });
+      }
+    }
+
+    // 首頁心情
+    homeMoods.querySelectorAll('.mood-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        homeMoods.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('active'));
+        btn.classList.add('active');
+        state.homeMood = btn.getAttribute('data-mood') || '';
+        const petWelcome = document.getElementById('petWelcome');
+        petWelcome.textContent = `收到你的心情：${state.homeMood}。謝謝你願意告訴我，我們就從這裡開始，慢慢來。`;
+        save();
+      });
+    });
+
+    startBtn.addEventListener('click', ()=>{
+      home.classList.add('hidden');
+      learn.classList.remove('hidden');
+      renderCard();
+      showToast('歡迎來到卡片流學習空間 🦦');
+    });
+
+    // init
+    load();
+    bindJournalEvents();
+    updateProgress();
+  </script>
+</body>
+</html>
